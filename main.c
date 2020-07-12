@@ -52,7 +52,7 @@ void InitializeTimerA(void) {
 	TACCTL0 |= CCIE;	// capture / compare interrupt enable
 }
 
-volatile unsigned char checkButtonCtr;
+volatile unsigned short checkButtonCtr;
 enum buttonStateT {pushed, maybeReleased, released};
 void toggleRedLED(void);
 void CheckButton(void) {
