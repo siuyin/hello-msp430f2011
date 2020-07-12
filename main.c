@@ -60,10 +60,10 @@ void CheckButton(void) {
 	P1OUT |= RED_LED;
 }
 
-unsigned volatile int toggleGreenLEDCtr = 0;
+unsigned volatile short toggleGreenLEDCtr = 0;
 void ToggleGreenLED(void) {
-	static unsigned t = 500;	// toggle LED every n ticks
-	static unsigned lda = 0;	// lda: last done at
+	static unsigned short t = 500;	// toggle LED every n ticks
+	static unsigned char lda = 0;	// lda: last done at
 	
 	if (toggleGreenLEDCtr != 0 || lda == tick) {
 		return;
