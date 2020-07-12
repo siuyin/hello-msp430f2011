@@ -7,7 +7,7 @@
 #define BUTTON BIT3
 
 // Global variables used by main and interrupt service routine(s)
-unsigned volatile char tick;
+unsigned volatile short tick;
 
 void InitializeClocks(void);
 void InitializePorts(void);
@@ -56,9 +56,9 @@ volatile unsigned char checkButtonCtr;
 enum buttonStateT {pushed, maybeReleased, released};
 void toggleRedLED(void);
 void CheckButton(void) {
-	static const unsigned char t = 30;
+	static const unsigned short t = 30;
 	static enum buttonStateT state = released;
-	static unsigned char lda = 0;
+	static unsigned short lda = 0;
 	
 	if (checkButtonCtr != 0 || lda == tick) {
 		return;
@@ -96,7 +96,7 @@ void toggleRedLED(void){
 unsigned volatile short toggleGreenLEDCtr;
 void ToggleGreenLED(void) {
 	static unsigned short t = 500;	// toggle LED every n ticks
-	static unsigned char lda = 0;	// lda: last done at
+	static unsigned short lda = 0;	// lda: last done at
 	
 	if (toggleGreenLEDCtr != 0 || lda == tick){
 		return;
