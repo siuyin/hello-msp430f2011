@@ -52,12 +52,45 @@ void InitializeTimerA(void) {
 	TACCTL0 |= CCIE;	// capture / compare interrupt enable
 }
 
+volatile unsigned char checkButtonCtr = 0;
+enum buttonStateT {pushed, maybeReleased, released};
+void toggleRedLED(void);
 void CheckButton(void) {
-	if (P1IN & BUTTON) {
-		P1OUT &= ~RED_LED;
+	static const unsigned char t = 30;
+	static enum buttonStateT state = released;
+	static unsigned char lda = 0;
+	
+	if (checkButtonCtr != 0 || lda == tick) {
 		return;
 	}
-	P1OUT |= RED_LED;
+	lda = tick;
+	checkButtonCtr = t;
+	
+	switch (state) {
+	case released:
+		if ((P1IN & BUTTON) == 0) {	// button pushed
+			state = pushed;
+			toggleRedLED();
+		}
+		break;
+	case pushed:
+		if ((P1IN & BUTTON) == 0) {
+			state = pushed;
+			break;
+		}
+		state = maybeReleased;
+		break;
+	case maybeReleased:
+		if ((P1IN & BUTTON) == 0) {
+			state = pushed;
+			break;
+		}
+		state = released;
+		break;
+	}
+}
+void toggleRedLED(void){
+	P1OUT ^= RED_LED;
 }
 
 unsigned volatile short toggleGreenLEDCtr = 0;
@@ -79,9 +112,9 @@ void ToggleGreenLED(void) {
 #pragma vector=TIMERA0_VECTOR
 __interrupt void Timer_A (void) {
 	if (toggleGreenLEDCtr > 0) toggleGreenLEDCtr--;
-	
-	//P1OUT |= GREEN_LED;
+	if (checkButtonCtr > 0) checkButtonCtr--;
+
 	tick++;
 	
-	TACCTL0 &= ~CCIFG;	// clear capture/compare interrupt flag
+	//TACCTL0 &= ~CCIFG;	// capture/compare interrupt flag is automatically cleared
 }
