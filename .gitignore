@@ -1,6 +1,7 @@
 *.swp
 *secret*
 Debug
+Release
 .ccsproject
 .cdtbuild
 .cdtproject
